@@ -1,65 +1,63 @@
 import React from 'react';
-import { StyleSheet, 
-  View, 
-  Animated, 
+import {
+  StyleSheet,
+  View,
+  Animated,
   Dimensions,
   TouchableWithoutFeedback,
   Easing
 } from 'react-native';
+import CircleTransition from './src/components/CircleTransition.js';
+
 const { width, height } = Dimensions.get('window');
-const size = Math.min(width, height) - 1;
-export default class App extends React.Component { 
+const screens = [{
+  id: 0,
+  bgcolor: '#698FB2'
+}, {
+  id: 1,
+  bgcolor: '#68B0B3'
+}, {
+  id: 2,
+  bgcolor: '#9B91BA'
+}];
+
+export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      scale: new Animated.Value(0)
+      _counter: 0,
+      currentbg: screens[0].bgcolor
     };
   }
-  
+
   onPress() {
-    Animated.timing(this.state.scale, {
-      toValue: 4,
-      duration: 1000,
-      easing: Easing.linear
-    }).start(() => {
-      this.setState({
-        scale: new Animated.Value(0)
-      });
+    const { _counter } = this.state;
+    let newCounter = _counter < screens.length - 1 ? _counter + 1 : 0;
+    let newColor = screens[newCounter].bgcolor;
+    this.setState({
+      _counter: newCounter
+    }, () => {
+      this.circleTransition.start(newColor, this.changeColor.bind(this, newColor));
     });
   }
 
-  getLeftPosition () {
-    const halfSize = size / 2;
-    const halfWidth = width / 2;
-    let marginHorizontalTopLeft = -halfSize;
-  return marginHorizontalTopLeft + halfWidth;
-  }
-  getTopPosition () {
-    const halfSize = size / 2;
-    let marginVerticalTopLeft = -halfSize;
-  return marginVerticalTopLeft + height;
+  changeColor(newColor) {
+    this.setState({
+      currentbg: newColor
+    });
   }
 
   render() {
-    let topPosition = this.getTopPosition();
-    let leftPosition = this.getLeftPosition();
     return (
       <TouchableWithoutFeedback onPress={this.onPress.bind(this)}>
-      <View style={styles.container}>
-        <Animated.View style={{
-          position: 'absolute',
-          backgroundColor: '#ccc',
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          transform: [{
-            scale: this.state.scale
-          }],
-          left: leftPosition,
-          top: topPosition
-        }} />
+      <View style={[styles.container, {
+        backgroundColor: this.state.currentbg
+      }]}>
+        <CircleTransition
+          ref={(circle) => { this.circleTransition = circle }}
+        />
       </View>
-      </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
     );
   }
 }
