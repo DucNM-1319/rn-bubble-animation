@@ -32,17 +32,6 @@ export default class App extends React.Component {
     };
   }
 
-  onPress() {
-    const { _counter } = this.state;
-    let newCounter = _counter < screens.length - 1 ? _counter + 1 : 0;
-    let newColor = screens[newCounter].bgcolor;
-    this.setState({
-      _counter: newCounter
-    }, () => {
-      this.circleTransition.start(newColor, this.changeColor.bind(this, newColor));
-    });
-  }
-
   changeColor(newColor) {
     this.setState({
       currentbg: newColor
@@ -91,25 +80,15 @@ export default class App extends React.Component {
     };
 
     return (
-      // <GestureRecognizer onPress={this.onPress.bind(this)}
-      //   style={[styles.container, { backgroundColor: this.state.currentbg }]}
-      //   onSwipe={(direction, state) => this.onSwipe(direction, state)}
-      //   config={config}
-      // >
-      //   <CircleTransition
-      //     ref={(circle) => { this.circleTransition = circle }}
-      //   />
-      // </GestureRecognizer>
-
-      <TouchableWithoutFeedback onPress={this.onPress.bind(this)}>
-        <View style={[styles.container, {
-          backgroundColor: this.state.currentbg
-        }]}>
-          <CircleTransition
-            ref={(circle) => { this.circleTransition = circle }}
-          />
-        </View>
-      </TouchableWithoutFeedback>
+      <GestureRecognizer onPress={this.onPress.bind(this)}
+        style={[styles.container, { backgroundColor: this.state.currentbg }]}
+        onSwipe={(direction, state) => this.onSwipe(direction, state)}
+        config={config}
+      >
+        <CircleTransition
+          ref={(circle) => { this.circleTransition = circle }}
+        />
+      </GestureRecognizer>
     );
   }
 }
